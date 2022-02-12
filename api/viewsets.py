@@ -21,10 +21,9 @@ class SlackAppViewset(viewsets.ReadOnlyModelViewSet):
         # print(data)
 
         client = WebClient(token=os.getenv('BOT_AUTH_TOKEN'))
-        client.chat_postEphemeral(
+        client.chat_postMessage(
             channel=os.getenv('CHANNEL'),
-            text="Hello from your app! :tada:",
-            user=""
+            text="Hello from your app! :tada:"
         )
         
         return Response(data, status=status.HTTP_200_OK)
