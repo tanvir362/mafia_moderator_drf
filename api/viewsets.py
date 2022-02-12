@@ -3,6 +3,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from slack_sdk import WebClient
+import os
+from django.conf import settings
 
 
 
@@ -32,4 +34,4 @@ class SlackAppViewset(viewsets.ReadOnlyModelViewSet):
     def test(self, request, *args, **kwargs):
 
 
-        return Response({"msg": "welcome to mafia moderator"}, status=status.HTTP_200_OK)
+        return Response({"msg": "welcome to mafia moderator", "env": os.getenv('ENVIRONMENT'), "debug": settings.DEBUG}, status=status.HTTP_200_OK)
