@@ -9,6 +9,9 @@ from slack_sdk import WebClient
 
 class SlackAppViewset(viewsets.ReadOnlyModelViewSet):
     permission_classes=[AllowAny]
+
+    def get_serializer_class(self, *args, **kwargs):
+        pass
     
     @action(methods=['POST'],detail = False)
     def new_round(self, request, *args, **kwargs):
@@ -23,3 +26,10 @@ class SlackAppViewset(viewsets.ReadOnlyModelViewSet):
         # )
         
         return Response(data, status=status.HTTP_200_OK)
+
+
+    @action(methods=['GET'],detail = False)
+    def test(self, request, *args, **kwargs):
+
+
+        return Response({"msg": "welcome to mafia moderator"}, status=status.HTTP_200_OK)
