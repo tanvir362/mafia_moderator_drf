@@ -40,3 +40,16 @@ class Round(models.Model):
 
         # send message in mafia channel saying about what happend in past night and to start discussion 
 
+
+    def assign_player_a_role(self, player):
+        if player in self.player_role:
+            raise Exception("You already have a role")
+
+        if self.roles:
+            role = self.roles.pop(random.randint(0, len(self.roles)-1))
+            self.player_role[player] = role
+            self.save()
+
+            return role
+
+        raise Exception("Invalid command")
