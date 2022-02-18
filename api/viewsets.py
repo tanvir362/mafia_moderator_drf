@@ -40,6 +40,25 @@ class SlackAppViewset(viewsets.ReadOnlyModelViewSet):
         
         return Response(status=status.HTTP_200_OK)
 
+    @action(methods=['POST'], detail=False)
+    def my_role(self, request, *args, **kwargs):
+        payload = request.data
+        print(payload)
+
+        round = Round.objects.get(team_id=payload["team_id"])
+        player = payload["user_id"]
+
+        try:
+
+            role = round.assign_player_a_role(player)
+
+            send_message(player, role)
+
+        except Exception as e:
+            send_message(player, str(e))
+        
+        return Response(status=status.HTTP_200_OK)
+
     @action(methods=['GET'],detail = False)
     def test(self, request, *args, **kwargs):
 
