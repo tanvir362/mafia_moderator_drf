@@ -2,6 +2,9 @@ import uuid
 from django.db import models
 import jsonfield
 import random
+from api.services import send_message
+import time
+import os
 
 
 class Round(models.Model):
@@ -39,10 +42,10 @@ class Round(models.Model):
                 self.player_is_alive[self.mafia_kill] = False
                 killed = self.mafia_kill
 
-        self.player_vote = {player: 0 for player in self.player_vote.keys()}
+        self.player_vote = {player: 0 for player in self.player_role.keys() if self.player_is_alive[player]}
         self.save()
 
-        # send message in mafia channel saying about what happend in past night and to start discussion 
+        return killed
 
     def notify_when_day(self):
         time.sleep(60)
