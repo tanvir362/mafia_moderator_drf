@@ -26,7 +26,11 @@ class Round(models.Model):
         self.sheriff_reveal = ""
 
         self.save()
-        #send message to mafia channel asking mafia, sheriff, doctor to perform actions
+
+    def notify_when_night(self):
+        time.sleep(60)
+        self.start_night()
+        send_message(os.getenv('CHANNEL'), "It's night, doctor, sheriff and mafia do your tasks!")
 
     def start_day(self):
         killed = ''
