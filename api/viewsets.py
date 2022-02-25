@@ -6,9 +6,11 @@ import os
 from django.conf import settings
 from api.models import Round
 from api.services import send_message
+from threading import Thread
+import json
 
 
-class SlackAppViewset(viewsets.ReadOnlyModelViewSet):
+class SlackAppViewset(viewsets.ViewSet):
     permission_classes=[AllowAny]
 
     def get_serializer_class(self, *args, **kwargs):
@@ -54,9 +56,16 @@ class SlackAppViewset(viewsets.ReadOnlyModelViewSet):
 
             send_message(player, role)
 
+            if not round.roles:
+                send_message(os.getenv('CHANNEL'), 'Night will start with in a minute')
+                
+                th = Thread(target=round.notify_when_night, daemon=False)
+                th.start()
+
         except Exception as e:
             send_message(player, str(e))
         
+        print('task done')
         return Response(status=status.HTTP_200_OK)
 
     @action(methods=['GET'],detail = False)
