@@ -44,6 +44,16 @@ class Round(models.Model):
 
         # send message in mafia channel saying about what happend in past night and to start discussion 
 
+    def notify_when_day(self):
+        time.sleep(60)
+        killed = self.start_day()
+        if killed:
+            txt = f'A new day has started with a bad news, last night mafia killed {killed}!'
+        else:
+            txt = "A new day has started and a good news is no one killed last night"
+        send_message(os.getenv('CHANNEL'), txt+'\n Voting will be started within 2 minutes by then you can discuss to identify who is mafia')
+
+
 
     def assign_player_a_role(self, player):
         if player in self.player_role:
