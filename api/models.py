@@ -5,6 +5,8 @@ import random
 from api.services import send_message
 import time
 import os
+from threading import Thread
+from itertools import chain
 
 
 class Round(models.Model):
@@ -75,3 +77,12 @@ class Round(models.Model):
             return role
 
         raise Exception("Invalid command")
+
+
+    def kill(self, player_to_kill):
+        if not self.player_is_alive[player_to_kill]:
+            raise Exception('Player is not alive')
+
+        self.mafia_kill = player_to_kill
+        self.save()
+

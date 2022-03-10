@@ -65,6 +65,38 @@ class SlackAppViewset(viewsets.ViewSet):
         print('task done')
         return Response(status=status.HTTP_200_OK)
 
+    
+    @action(methods=['POST'], detail=False)
+    def kill(self, request, *args, **kwargs):
+        payload = request.data
+        print(json.dumps(payload, indent=2))
+
+        try:
+            round = Round.objects.get(team_id=payload["team_id"])
+            player = payload["user_id"]
+            player_to_kill = payload["text"].split('|')[0].split('@')[1]
+
+            if not round.player_is_alive[player]:
+                raise Exception("You can't perform any task, you are not alive")
+            
+            if not round.is_night:
+                raise Exception("It's not night yet")
+
+            if round.player_role[player] != "mafia":
+                raise Exception("You can't kill a player as you'r not a mafia")
+
+            round.kill(player_to_kill)
+
+            if round.is_night_ends:
+                round.start_day()
+                
+            send_message(player, text="Wait to see if the victim is killed")
+        except Exception as e:
+            send_message(player, text=str(e))
+
+        return Response(status=status.HTTP_200_OK)
+
+
     @action(methods=['GET'],detail = False)
     def test(self, request, *args, **kwargs):
 
