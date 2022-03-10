@@ -72,6 +72,7 @@ class Round(models.Model):
         if self.roles:
             role = self.roles.pop(random.randint(0, len(self.roles)-1))
             self.player_role[player] = role
+            self.player_is_alive[player] = True
             self.save()
 
             return role
