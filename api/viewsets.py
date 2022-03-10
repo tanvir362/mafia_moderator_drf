@@ -37,7 +37,7 @@ class SlackAppViewset(viewsets.ViewSet):
 
             send_message(
                 channel=os.getenv('CHANNEL'),
-                text="Now round started.\nEveryone, please run /my_role command to get your role"
+                text="New round started.\nEveryone, please run /my_role command to get your role"
             )
         
         return Response(status=status.HTTP_200_OK)
