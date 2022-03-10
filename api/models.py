@@ -49,19 +49,24 @@ class Round(models.Model):
                 self.player_is_alive[self.mafia_kill] = False
                 killed = self.mafia_kill
 
-        self.player_vote = {player: 0 for player in self.player_role.keys() if self.player_is_alive[player]}
+        self.player_vote = {player: [] for player in self.player_role.keys() if self.player_is_alive[player]}
+        self.is_night = False
         self.save()
 
-        return killed
-
-    def notify_when_day(self):
-        time.sleep(60)
-        killed = self.start_day()
         if killed:
-            txt = f'A new day has started with a bad news, last night mafia killed {killed}!'
+            txt = f'A new day has started with a bad news, last night mafia killed <@{killed}>!'
         else:
             txt = "A new day has started and a good news is no one killed last night"
-        send_message(os.getenv('CHANNEL'), txt+'\n Voting will be started within 2 minutes by then you can discuss to identify who is mafia')
+        
+        send_message(os.getenv('CHANNEL'), txt+f'\n Voting will be started within 2 minutes by then you can discuss to identify who is mafia among {" ".join(map(lambda x: f"<@{x}>", self.player_vote.keys()))}')
+        
+        th = Thread(target=self.notify_voting_start, daemon=False)
+        th.start()
+        
+
+    def notify_voting_start(self):
+        time.sleep(120)
+        send_message(os.getenv('CHANNEL'), "Time's up.\nNow, you can vote for a player by running /vote command")
 
 
 
