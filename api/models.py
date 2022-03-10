@@ -134,6 +134,16 @@ class Round(models.Model):
 
 
 
+    def who_wins(self, result):
+        if result:
+            if self.player_role[result] == 'mafia':
+                return 'Townspeople'
+
+        if len([player for player in self.player_role.keys() if self.player_is_alive[player]]) <= 2:
+            return 'Mafia'
+
+        return ''
+
     @property
     def is_night_ends(self):
 
