@@ -117,6 +117,22 @@ class Round(models.Model):
 
         self.save()
 
+    def generate_vote_result(self):
+        res = []
+        for player in self.player_vote:
+            res.append((player, len(self.player_vote[player])))
+
+        res = sorted(res, key=lambda x: x[1], reverse=True)
+
+        if len(res)>1:
+            if res[0][1] != res[1][1]:
+                self.player_is_alive[res[0][0]] = False
+                self.save()
+                return res[0][0]
+
+        return ''
+
+
 
     @property
     def is_night_ends(self):

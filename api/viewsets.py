@@ -179,7 +179,7 @@ class SlackAppViewset(viewsets.ViewSet):
             send_message(player, f"You voted for <@{player_to_vote}>")
 
             if round.is_voting_end:
-                result = round.vote_result()
+                result = round.generate_vote_result()
                 if result:
                     send_message(os.getenv('CHANNEL'), f"<@{result}> is killed by townspeople")
                 else:
