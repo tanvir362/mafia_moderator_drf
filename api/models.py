@@ -117,3 +117,9 @@ class Round(models.Model):
 
         self.save()
 
+
+    @property
+    def is_night_ends(self):
+
+        return self.mafia_kill!="" and self.doctor_heal!="" and self.sheriff_reveal!=""
+
