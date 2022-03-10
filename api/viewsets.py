@@ -128,6 +128,37 @@ class SlackAppViewset(viewsets.ViewSet):
         return Response(status=status.HTTP_200_OK)
 
     
+    @action(methods=['POST'], detail=False)
+    def reveal(self, request, *args, **kwargs):
+        payload = request.data
+        print(json.dumps(payload, indent=2))
+
+        try:
+            round = Round.objects.get(team_id=payload["team_id"])
+            player = payload["user_id"]
+            player_to_reveal = payload["text"].split('|')[0].split('@')[1]
+
+            if not round.player_is_alive[player]:
+                raise Exception("You can't perform any task, you are not alive")
+            
+            if not round.is_night:
+                raise Exception("It's not night yet")
+
+            if round.player_role[player] != "sheriff":
+                raise Exception("You can't reveal a player as you'r not a sheriff")
+
+            role = round.reveal(player_to_reveal)
+
+            if round.is_night_ends:
+                round.start_day()
+
+            send_message(player, f"<@{player_to_reveal}> is a {role}")
+        except Exception as e:
+            send_message(player, text=str(e))
+
+        return Response(status=status.HTTP_200_OK)
+
+    
     @action(methods=['GET'],detail = False)
     def test(self, request, *args, **kwargs):
 

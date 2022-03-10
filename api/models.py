@@ -95,3 +95,13 @@ class Round(models.Model):
         self.save()
 
 
+    def reveal(self, player_to_reveal):
+        if not self.player_is_alive[player_to_reveal]:
+            raise Exception('Player is not alive')
+
+        self.sheriff_reveal = player_to_reveal
+        self.save()
+
+        return self.player_role[player_to_reveal]
+
+    
