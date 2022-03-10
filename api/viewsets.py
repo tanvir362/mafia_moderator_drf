@@ -159,6 +159,45 @@ class SlackAppViewset(viewsets.ViewSet):
         return Response(status=status.HTTP_200_OK)
 
     
+    @action(methods=['POST'], detail=False)
+    def vote(self, request, *args, **kwargs):
+        payload = request.data
+        print(json.dumps(payload, indent=2))
+
+        try:
+            round = Round.objects.get(team_id=payload["team_id"])
+            player = payload["user_id"]
+            player_to_vote = payload["text"].split('|')[0].split('@')[1]
+
+            if round.is_night:
+                raise Exception("It's not day yet")
+
+            if not round.player_is_alive[player]:
+                raise Exception("You can't perform any task, you are not alive")
+
+            round.vote(player_to_vote)
+            send_message(player, f"You voted for <@{player_to_vote}>")
+
+            if round.is_voting_end:
+                result = round.vote_result()
+                if result:
+                    send_message(os.getenv('CHANNEL'), f"<@{result}> is killed by townspeople")
+                else:
+                    send_message(os.getenv('CHANNEL'), "No one is killed by townspeople")
+
+                winner = round.who_wins(result)
+                if winner:
+                    send_message(os.getenv('CHANNEL'), f"Game over!\n{winner} wins :tada:")
+                    round.delete()
+                else:
+                    round.start_night()
+            
+        except Exception as e:
+            send_message(player, text=str(e))
+
+        return Response(status=status.HTTP_200_OK)
+    
+    
     @action(methods=['GET'],detail = False)
     def test(self, request, *args, **kwargs):
 

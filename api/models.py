@@ -105,3 +105,15 @@ class Round(models.Model):
         return self.player_role[player_to_reveal]
 
     
+    def vote(self, player_who_vote, player_to_vote):
+        if not self.player_is_alive[player_to_vote]:
+            raise Exception('Player is not alive')
+
+        for votes in self.player_vote.values():
+            if player_who_vote in votes:
+                raise Exception('You already vote for a player')
+
+        self.player_vote[player_to_vote].append(player_who_vote)
+
+        self.save()
+
