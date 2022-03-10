@@ -97,6 +97,37 @@ class SlackAppViewset(viewsets.ViewSet):
         return Response(status=status.HTTP_200_OK)
 
 
+    @action(methods=['POST'], detail=False)
+    def heal(self, request, *args, **kwargs):
+        payload = request.data
+        print(json.dumps(payload, indent=2))
+
+        try:
+            round = Round.objects.get(team_id=payload["team_id"])
+            player = payload["user_id"]
+            player_to_heal = payload["text"].split('|')[0].split('@')[1]
+
+            if not round.player_is_alive[player]:
+                raise Exception("You can't perform any task, you are not alive")
+            
+            if not round.is_night:
+                raise Exception("It's not night yet")
+
+            if round.player_role[player] != "doctor":
+                raise Exception("You can't heal a player as you'r not a doctor")
+
+            round.heal(player_to_heal)
+
+            if round.is_night_ends:
+                round.start_day()
+
+            send_message(player, f"You are healing <@{player_to_heal}>")
+        except Exception as e:
+            send_message(player, text=str(e))
+
+        return Response(status=status.HTTP_200_OK)
+
+    
     @action(methods=['GET'],detail = False)
     def test(self, request, *args, **kwargs):
 

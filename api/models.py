@@ -86,3 +86,12 @@ class Round(models.Model):
         self.mafia_kill = player_to_kill
         self.save()
 
+    
+    def heal(self, player_to_heal):
+        if not self.player_is_alive[player_to_heal]:
+            raise Exception('Player is not alive')
+
+        self.doctor_heal = player_to_heal
+        self.save()
+
+
