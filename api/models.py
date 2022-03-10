@@ -24,15 +24,20 @@ class Round(models.Model):
 
 
     def start_night(self):
-        self.doctor_heal = ""
-        self.mafia_kill = ""
-        self.sheriff_reveal = ""
-
-        self.save()
+        send_message(os.getenv('CHANNEL'), 'Night will start with in a minute') 
+        th = Thread(target=round.notify_when_night, daemon=False)
+        th.start()
 
     def notify_when_night(self):
         time.sleep(60)
-        self.start_night()
+
+        #setting night attributes
+        self.doctor_heal = ""
+        self.mafia_kill = ""
+        self.sheriff_reveal = ""
+        self.is_night = True
+
+        self.save()
         send_message(os.getenv('CHANNEL'), "It's night, doctor, sheriff and mafia do your tasks!")
 
     def start_day(self):

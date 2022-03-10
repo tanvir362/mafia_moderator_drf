@@ -57,10 +57,7 @@ class SlackAppViewset(viewsets.ViewSet):
             send_message(player, role)
 
             if not round.roles:
-                send_message(os.getenv('CHANNEL'), 'Night will start with in a minute')
-                
-                th = Thread(target=round.notify_when_night, daemon=False)
-                th.start()
+                round.start_night()
 
         except Exception as e:
             send_message(player, str(e))
