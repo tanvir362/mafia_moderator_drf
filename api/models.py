@@ -123,3 +123,12 @@ class Round(models.Model):
 
         return self.mafia_kill!="" and self.doctor_heal!="" and self.sheriff_reveal!=""
 
+    @property
+    def is_voting_end(self):
+        for user in self.player_vote.keys():
+            if user not in [*chain.from_iterable(self.player_vote.values())]:
+                return False
+
+        return True
+
+        
